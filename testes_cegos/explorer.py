@@ -46,8 +46,8 @@ class Explorer(AbstAgent):
         match self.NAME:
             case 'EXPL_1': exploring_order = [3, 4, 2, 1, 5, 6, 0, 7]
             case 'EXPL_2': exploring_order = [1, 2, 0, 3, 7, 6, 4, 5]
-            case 'EXPL_3': exploring_order = [7, 0, 6, 1, 5, 4, 2, 3]
-            case 'EXPL_4': exploring_order = [5, 6, 4, 7, 3, 2, 0, 1]
+            case 'EXPL_3': exploring_order = [7, 0, 6, 5, 1, 4, 2, 3]
+            case 'EXPL_4': exploring_order = [5, 6, 4, 3, 7, 2, 0, 1]
             case _:        print(self.NAME)
         self.dfs = DFS(exploring_order)
 
