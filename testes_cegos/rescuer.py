@@ -31,7 +31,7 @@ class Rescuer(AbstAgent):
         # planning
         self.__planner()
     
-    def upload_map(self, map, victims):
+    def upload_map(self, map):
         """ The explorer sends the map containing the walls and
         victims' location. The rescuer becomes ACTIVE. From now,
         the deliberate method is called by the environment"""
