@@ -23,11 +23,12 @@ class DFS:
                     self.untried[state].append(AbstAgent.AC_INCR[i])
 
         if state is not None:
-            self.result[(self.last_state, self.last_action)] = state
-            if state not in self.unbacktracked:
-                self.unbacktracked[state] = []
-            
-            if self.last_state is not None:
+            if (self.last_state, self.last_action) not in self.result:
+                self.result[(self.last_state, self.last_action)] = state
+
+                if state not in self.unbacktracked:
+                    self.unbacktracked[state] = []
+                
                 self.unbacktracked[state].append(self.last_state)
 
         if len(self.untried[state]) == 0:

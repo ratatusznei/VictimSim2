@@ -34,6 +34,8 @@ class Explorer(AbstAgent):
         self.map.insert((0, 0), self.check_for_victim(), 1, self.check_walls_and_lim())
 
         self.walk_time = 0
+
+        self.cost_to_home = 0
         self.path_to_home = []
 
         self.exploring = True
@@ -61,7 +63,7 @@ class Explorer(AbstAgent):
         # No more actions, time almost ended
         print(f'{self.get_rtime()} / {self.walk_time}')
 
-        if self.exploring and self.get_rtime() <= len(self.path_to_home) * 4.5:
+        if self.exploring and self.get_rtime() <= self.cost_to_home + 30.:
             # Time to go home
             # stop exploring and go home
             self.exploring = False
@@ -99,10 +101,14 @@ class Explorer(AbstAgent):
             if self.state and self.exploring:
                 seq = self.check_for_victim()
 
-                difficulty = walk_delta_time / self.COST_LINE if dx == 0 or dy == 0 else walk_delta_time / self.COST_DIAG
+                if dx == 0 or dy == 0:
+                    difficulty = walk_delta_time / self.COST_LINE
+                else:
+                    difficulty = walk_delta_time / self.COST_DIAG
+
                 self.map.insert(self.state, seq, difficulty, self.check_walls_and_lim())
 
-                self.path_to_home = self.map.get_path(self.state, (0, 0))
+                self.cost_to_home, self.path_to_home = self.map.get_path(self.state, (0, 0))
 
                 if seq != VS.NO_VICTIM:
                     start_time = self.get_rtime()
