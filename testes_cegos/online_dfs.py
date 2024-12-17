@@ -7,8 +7,7 @@ class DFS:
         self.exploring_order = exploring_order
 
         self.untried: dict = {}
-        self.result: dict = {} 
-        self.unbacktracked: dict = {}
+        self.walk_queue = []
         self.last_state = None
         self.last_action = None
 
@@ -22,24 +21,29 @@ class DFS:
                 if map.get_neighbors(state)[i] == VS.CLEAR and next_state not in self.explored:
                     self.untried[state].append(AbstAgent.AC_INCR[i])
 
-        if state is not None:
-            if (self.last_state, self.last_action) not in self.result:
-                self.result[(self.last_state, self.last_action)] = state
-
-                if state not in self.unbacktracked:
-                    self.unbacktracked[state] = []
-                
-                self.unbacktracked[state].append(self.last_state)
-
-        if len(self.untried[state]) == 0:
-            if len(self.unbacktracked[state]) == 0:
-                return (0, 0)
-            else:
-                next_state = self.unbacktracked[state].pop(0)
-                action = (next_state[0] - state[0], next_state[1] - state[1])
-        else:
+        if len(self.untried[state]) > 0:
             action = self.untried[state].pop(0)
+            next_state = (state[0] + action[0], state[1] + action[1])
+        else:
+            action = None
+            next_state = None
 
+        while next_state in self.explored:
+            if len(self.untried[state]) == 0:
+                action = None
+                break
+
+            action = self.untried[state].pop(0)
+            next_state = (state[0] + action[0], state[1] + action[1])
+
+        if action == None:
+            if len(self.walk_queue) == 0:
+                return (0, 0)
+
+            next_state = self.walk_queue.pop()
+            action = (next_state[0] - state[0], next_state[1] - state[1])
+        else:
+            self.walk_queue.append(state)
 
         self.explored.add(state)
         self.last_state = state
