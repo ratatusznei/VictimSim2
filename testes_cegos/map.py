@@ -8,8 +8,6 @@ class Map:
         self.map: dict = { 
             # (x, y): (vict_id, diff, successors),
         }
-
-        self.victims: dict = {}
  
         self.x_lims = (float('inf'), float('-inf'))
         self.y_lims = (float('inf'), float('-inf'))
@@ -19,8 +17,10 @@ class Map:
         self.x_lims = (min(self.x_lims[0], state[0]), max(self.x_lims[1], state[0]))
         self.y_lims = (min(self.y_lims[0], state[1]), max(self.y_lims[1], state[1]))
 
-    def insert_victim_signals(self, state, signals):
-        self.victims[state] = signals
+    def update_map(self, other):
+        self.map.update(other.map)
+        self.x_lims = (min(self.x_lims[0], other.x_lims[0]), max(self.x_lims[1], other.x_lims[1]))
+        self.y_lims = (min(self.y_lims[0], other.y_lims[0]), max(self.y_lims[1], other.y_lims[1]))
 
     def get_victim_id(self, state):
         return self.map[state][0]

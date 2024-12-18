@@ -13,12 +13,9 @@ def main(data_folder_name, cfg_ag_folder):
     # Instantiate the environment
     env = Env(data_folder)
     
-    # config files for the agents
-    rescuer_file = os.path.join(cfg_ag_folder, "rescuer_1_config.txt")
-    explorer_file = os.path.join(cfg_ag_folder, "explorer_1_config.txt")
-    
     # Instantiate agents rescuer and explorer
-    master_rescuer = Rescuer(env, rescuer_file)
+    rescuer_file = os.path.join(cfg_ag_folder, "rescuer_1_config.txt")
+    master_rescuer = Rescuer(env, rescuer_file, master=True)
 
     # Explorer needs to know rescuer to send the map
     # that's why rescuer is instatiated before
@@ -26,6 +23,7 @@ def main(data_folder_name, cfg_ag_folder):
         filename = f"explorer_{exp:1d}_config.txt"
         explorer_file = os.path.join(cfg_ag_folder, filename)
         Explorer(env, explorer_file, master_rescuer)
+    
 
     # Run the environment simulator
     env.run()
@@ -47,14 +45,13 @@ if __name__ == '__main__':
             "data_225v_100x80",
             "data_300v_90x90",
             "data_320v_90x90",
-            "data_4000v",
             "data_400v_90x90",
             "data_408v_94x94",
             "data_42v_20x20",
             "data_800v",
         ]
 
-        data_folder = os.path.join(cur_folder.parent, "datasets", datasets[3])
+        data_folder = os.path.join(cur_folder.parent, "datasets", datasets[6])
         cfg_ag_folder = os.path.join(cur_folder, "cfg_1")
         
     main(data_folder, cfg_ag_folder)

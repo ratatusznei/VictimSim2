@@ -19,11 +19,11 @@ class DFS:
                 next_state = (state[0] + AbstAgent.AC_INCR[i][0], state[1] + AbstAgent.AC_INCR[i][1])
 
                 if map.get_neighbors(state)[i] == VS.CLEAR and next_state not in self.explored:
-                    self.untried[state].append(AbstAgent.AC_INCR[i])
+                    action = AbstAgent.AC_INCR[i]
+                    self.untried[state].append((action, next_state))
 
         if len(self.untried[state]) > 0:
-            action = self.untried[state].pop(0)
-            next_state = (state[0] + action[0], state[1] + action[1])
+            action, next_state = self.untried[state].pop(0)
         else:
             action = None
             next_state = None
@@ -33,8 +33,7 @@ class DFS:
                 action = None
                 break
 
-            action = self.untried[state].pop(0)
-            next_state = (state[0] + action[0], state[1] + action[1])
+            action, next_state = self.untried[state].pop(0)
 
         if action == None:
             if len(self.walk_queue) == 0:

@@ -12,8 +12,6 @@ from vs.constants import VS
 from online_dfs import DFS
 from map import Map
 
-import time
-
 class Explorer(AbstAgent):
     def __init__(self, env, config_file, resc):
         """ Construtor do agente random on-line
@@ -33,6 +31,8 @@ class Explorer(AbstAgent):
         self.map = Map()
         self.map.insert((0, 0), self.check_for_victim(), 1, self.check_walls_and_lim())
 
+        self.victims: dict = {}
+
         self.walk_time = 0
 
         self.cost_to_home = 0
@@ -44,16 +44,19 @@ class Explorer(AbstAgent):
         # 6     2
         # 5  4  3
         match self.NAME:
-            case 'EXPL_1': exploring_order = [3, 4, 2, 1, 5, 6, 0, 7]
-            case 'EXPL_2': exploring_order = [1, 2, 0, 3, 7, 6, 4, 5]
+            case 'EXPL_1': exploring_order = [3, 4, 2, 5, 1, 6, 0, 7]
+            case 'EXPL_2': exploring_order = [1, 2, 0, 7, 3, 6, 4, 5]
             case 'EXPL_3': exploring_order = [7, 0, 6, 5, 1, 4, 2, 3]
             case 'EXPL_4': exploring_order = [5, 6, 4, 3, 7, 2, 0, 1]
             case _:        print(self.NAME)
         self.dfs = DFS(exploring_order)
 
+    def insert_victim_signals(self, state, signals):
+        self.victims[state] = signals
+
     def upload_map_and_stop(self):
         print(f"{self.NAME} No more time to explore... invoking the rescuer")
-        self.resc.upload_map(self.map)
+        self.resc.update_map(self.map, self.victims)
 
     def deliberate(self) -> bool:
         """ The agent chooses the next action. The simulator calls this
@@ -63,7 +66,7 @@ class Explorer(AbstAgent):
         # No more actions, time almost ended
         print(f'{self.get_rtime()} / {self.walk_time}')
 
-        if self.exploring and self.get_rtime() <= self.cost_to_home + 30.:
+        if self.exploring and self.get_rtime() <= self.cost_to_home + 80:
             # Time to go home
             # stop exploring and go home
             self.exploring = False
@@ -116,7 +119,7 @@ class Explorer(AbstAgent):
                     read_time = start_time - self.get_rtime()
                     self.walk_time += read_time
 
-                    self.map.insert_victim_signals(self.state, vs)
+                    self.insert_victim_signals(self.state, vs)
 
                     print(f"{self.NAME} Vital signals read, rtime: {self.get_rtime()}")
                     print(f"{self.NAME} Vict: {vs[0]}\n     pSist: {vs[1]:.1f} pDiast: {vs[2]:.1f} qPA: {vs[3]:.1f}")
