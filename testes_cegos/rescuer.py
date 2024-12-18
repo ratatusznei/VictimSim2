@@ -94,11 +94,19 @@ class Rescuer(AbstAgent):
 
         # This is a off-line trajectory plan, each element of the list is
         # a pair dx, dy that do the agent walk in the x-axis and/or y-axis
-        _, path_to = self.map.get_path((0, 0), self.victims[0][0])
-        path_to.reverse()
-        _, path_back = self.map.get_path(self.victims[0][0], (0, 0))
+        self.plan = []
+        plan_state = (0, 0)
+
+        while len(self.victims) > 0:
+            v = self.victims.pop(0)
+            _, path_to = self.map.get_path(plan_state, v[0])
+            path_to.reverse()
+            self.plan += path_to
+            plan_state = v[0]
+
+        _, path_back = self.map.get_path(plan_state, (0, 0))
         path_back.reverse()
-        self.plan = path_to + path_back
+        self.plan += path_back
         
     def deliberate(self) -> bool:
         """ This is the choice of the next action. The simulator calls this
