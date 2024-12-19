@@ -92,13 +92,26 @@ class Rescuer(AbstAgent):
         victims. Further actions may be necessary and should be added in the
         deliberata method"""
 
+        def pop_closest(state, victims):
+            ci = None
+            cd = float('inf')
+            for i, v in enumerate(victims):
+                dx = v[0][0] - state[0]
+                dy = v[0][1] - state[1]
+                d = dx*dx + dy*dy 
+                if d < cd:
+                    cd = d
+                    ci = i
+            
+            return victims.pop(ci)
+
         # This is a off-line trajectory plan, each element of the list is
         # a pair dx, dy that do the agent walk in the x-axis and/or y-axis
         self.plan = []
         plan_state = (0, 0)
 
         while len(self.victims) > 0:
-            v = self.victims.pop(0)
+            v = pop_closest(plan_state, self.victims)
             _, path_to = self.map.get_path(plan_state, v[0])
             path_to.reverse()
             self.plan += path_to

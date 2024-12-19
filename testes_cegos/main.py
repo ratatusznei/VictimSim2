@@ -39,19 +39,7 @@ if __name__ == '__main__':
     else:
         cur_folder = Path.cwd()
 
-        datasets = [
-            "data_10v_12x12",
-            "data_132v_100x80",
-            "data_225v_100x80",
-            "data_300v_90x90",
-            "data_320v_90x90",
-            "data_400v_90x90",
-            "data_408v_94x94",
-            "data_42v_20x20",
-            "data_800v",
-        ]
-
-        data_folder = os.path.join(cur_folder.parent, "datasets", datasets[6])
+        data_folder = os.path.join(cur_folder.parent, "datasets", "data_400v_90x90")
         cfg_ag_folder = os.path.join(cur_folder, "cfg_1")
         
     main(data_folder, cfg_ag_folder)
