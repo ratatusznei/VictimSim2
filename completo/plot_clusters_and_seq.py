@@ -63,7 +63,7 @@ VIC_COLOR_LIST = [VIC_COLOR_SEV1, VIC_COLOR_SEV2, VIC_COLOR_SEV3, VIC_COLOR_SEV4
 
 # CLUSTER COLORS
 rgb_idx = -1
-rgb_cluster = [(0,0,255), (255,0,0), (0,255,0), (152,10,15)]
+rgb_cluster = [(0,0,255), (255,0,0), (0,255,0), (152,10,15), (20, 142, 15), (20, 10, 130)] * 2
 
 def distance(p1, p2):
     return math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)

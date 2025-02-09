@@ -8,6 +8,10 @@ from vs.physical_agent import PhysAgent
 from vs.constants import VS
 from abc import ABC, abstractmethod
 
+import numpy as np
+
+from sklearn.cluster import KMeans
+
 from map import Map
 
 ## Classe que define o Agente Rescuer com um plano fixo
@@ -98,26 +102,20 @@ class Rescuer(AbstAgent):
                 writer.writerow([vs[0], x, y, vs[6], vs[7]])
 
     def cluster_victims(self):
-        nw_victims = []
-        ne_victims = []
-        sw_victims = []
-        se_victims = []
+        n_victims = len(self.victims)
+        n_clusters = 4 # int(n_victims**0.5);
 
-        midpoint = ((self.map.x_lims[0] + self.map.x_lims[1]) // 2, (self.map.y_lims[0] + self.map.y_lims[1]) // 2)
+        kmeans = KMeans(n_clusters, random_state=1)
 
-        for state, vs in self.victims.items():
-            if state[0] < midpoint[0]:
-                if state[1] < midpoint[1]:
-                    nw_victims.append((state, vs))
-                else:
-                    ne_victims.append((state, vs))
-            else:
-                if state[1] < midpoint[1]:
-                    sw_victims.append((state, vs))
-                else:
-                    se_victims.append((state, vs))
+        coordinates = np.array(list(self.victims.keys()))
+        kmeans.fit(coordinates)
 
-        return [nw_victims, ne_victims, sw_victims, se_victims]
+        clusters = [ [] for i in range(n_clusters) ]
+
+        for i, cluster_i in enumerate(kmeans.labels_):
+            clusters[cluster_i].append((list(self.victims.keys())[i], self.victims[list(self.victims.keys())[i]]))
+
+        return clusters
 
     def predict_severity_and_class(self):
         """ @TODO to be replaced by a classifier and a regressor to calculate the class of severity and the severity values.
@@ -125,9 +123,29 @@ class Rescuer(AbstAgent):
 
             This implementation assigns random values to both, severity value and class"""
 
+        data_treino = "../datasets/data_4000v/env_vital_signals.txt"
+        data_validacao = "../datasets/data_800v/env_vital_signals.txt"
+        df_treino = pd.read_csv(data_treino)
+        X_treino = df_treino.drop(df_treino.columns[[0, 1, 2, 6, 7]], axis=1)
+        value_treino = df_treino[df_treino.columns[[6]]]
+        class_treino = df_treino[df_treino.columns[[7]]]
+        df_validacao = pd.read_csv(data_validacao)
+        value_validacao = df_validacao.columns[[6]]
+        class_validacao = df_validacao.columns[[7]]
+        X_validacao = df_validacao.drop(df_validacao.columns[[0, 1, 2, 6, 7]], axis=1)
+
+        # vs é [id, pSist, pDiast, qPA, pulso, freq_resp, gravidade value, gravidade class]
+        # usar qPA, pulso e freq_resp APENAS
+        def decision_tree_classifier(vs): 
+            return random.randint(1, 4)
+
+        def decision_tree_regressor(vs):
+            return random.uniform(0.1, 99.9)
+
+
         for state, vs in self.victims.items():
-            severity_value = random.uniform(0.1, 99.9)          # to be replaced by a regressor 
-            severity_class = random.randint(1, 4)               # to be replaced by a classifier
+            severity_value = decision_tree_regressor(vs)
+            severity_class = decision_tree_classifier(vs)
             vs.extend([severity_value, severity_class])  # append to the list of vital signals; values is a pair( (x,y), [<vital signals list>] )
 
     def planner(self):
