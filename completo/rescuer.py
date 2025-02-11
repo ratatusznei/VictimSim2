@@ -9,10 +9,10 @@ from vs.constants import VS
 from abc import ABC, abstractmethod
 
 import numpy as np
-
 from sklearn.cluster import KMeans
 
 from map import Map
+from regressors_and_classifiers import load_training_data, train_DTClassifier, train_DTRegressor
 
 ## Classe que define o Agente Rescuer com um plano fixo
 class Rescuer(AbstAgent):
@@ -39,6 +39,10 @@ class Rescuer(AbstAgent):
         self.sequences = []
 
         if master: 
+            X_treino, value_treino, class_treino, X_validacao, value_validacao, class_validacao = load_training_data()
+            self.regressor = train_DTRegressor(X_treino, class_treino, X_validacao, class_validacao)
+            self.classifier = train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao)
+
             # Instantiate the other rescuers and assign the clusters to them
             self.rescuers = [self, None, None, None]
 
@@ -56,7 +60,6 @@ class Rescuer(AbstAgent):
         self.maps_received += 1
         self.map.update_map(map)
         self.victims.update(victims)
-
 
         if self.maps_received < 4:
             print(f'{self.NAME} received {self.maps_received} maps')
@@ -123,29 +126,13 @@ class Rescuer(AbstAgent):
 
             This implementation assigns random values to both, severity value and class"""
 
-        data_treino = "../datasets/data_4000v/env_vital_signals.txt"
-        data_validacao = "../datasets/data_800v/env_vital_signals.txt"
-        df_treino = pd.read_csv(data_treino)
-        X_treino = df_treino.drop(df_treino.columns[[0, 1, 2, 6, 7]], axis=1)
-        value_treino = df_treino[df_treino.columns[[6]]]
-        class_treino = df_treino[df_treino.columns[[7]]]
-        df_validacao = pd.read_csv(data_validacao)
-        value_validacao = df_validacao.columns[[6]]
-        class_validacao = df_validacao.columns[[7]]
-        X_validacao = df_validacao.drop(df_validacao.columns[[0, 1, 2, 6, 7]], axis=1)
-
-        # vs é [id, pSist, pDiast, qPA, pulso, freq_resp, gravidade value, gravidade class]
-        # usar qPA, pulso e freq_resp APENAS
-        def decision_tree_classifier(vs): 
-            return random.randint(1, 4)
-
-        def decision_tree_regressor(vs):
-            return random.uniform(0.1, 99.9)
-
-
         for state, vs in self.victims.items():
-            severity_value = decision_tree_regressor(vs)
-            severity_class = decision_tree_classifier(vs)
+            # vs é [id, pSist, pDiast, qPA, pulso, freq_resp, gravidade value, gravidade class]
+            # usar qPA, pulso e freq_resp APENAS
+            vs_features = np.array(vs[3:6]).reshape(1, -1)
+
+            severity_value = self.regressor.predict(vs_features)[0]
+            severity_class = self.classifier.predict(vs_features)[0]
             vs.extend([severity_value, severity_class])  # append to the list of vital signals; values is a pair( (x,y), [<vital signals list>] )
 
     def planner(self):
@@ -212,7 +199,7 @@ class Rescuer(AbstAgent):
             if seq != VS.NO_VICTIM:
                 res = self.first_aid() # True when rescued
 
-        print(f"{self.NAME} remaining time: {self.get_rtime()}")
+        # print(f"{self.NAME} remaining time: {self.get_rtime()}")
 
         return True
 

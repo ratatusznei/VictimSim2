@@ -6,7 +6,7 @@ from sklearn.neural_network import MLPClassifier, MLPRegressor
 
 from sklearn.metrics import classification_report, mean_squared_error
 
-def load_data():
+def load_training_data():
     data_treino = "../datasets/data_4000v/env_vital_signals.txt"
     data_validacao = "../datasets/data_800v/env_vital_signals.txt"
 
@@ -65,9 +65,10 @@ def train_MLPRegressor(X_treino, value_treino, X_validacao, value_validacao, hid
     return mlpc
 
 
-X_treino, value_treino, class_treino, X_validacao, value_validacao, class_validacao = load_data()
-train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao)
-train_MLPClassifier(X_treino, class_treino, X_validacao, class_validacao)
+if __name__ == '__main__':
+    X_treino, value_treino, class_treino, X_validacao, value_validacao, class_validacao = load_training_data()
+    train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao)
+    train_MLPClassifier(X_treino, class_treino, X_validacao, class_validacao)
 
-train_DTRegressor(X_treino, value_treino, X_validacao, value_validacao)
-train_MLPRegressor(X_treino, value_treino, X_validacao, value_validacao)
+    train_DTRegressor(X_treino, value_treino, X_validacao, value_validacao)
+    train_MLPRegressor(X_treino, value_treino, X_validacao, value_validacao)

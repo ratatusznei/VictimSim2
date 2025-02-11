@@ -47,8 +47,7 @@ class Explorer(AbstAgent):
             case 'EXPL_1': exploring_order = [3, 4, 2, 5, 1, 6, 0, 7]
             case 'EXPL_2': exploring_order = [1, 2, 0, 7, 3, 6, 4, 5]
             case 'EXPL_3': exploring_order = [7, 0, 6, 5, 1, 4, 2, 3]
-            case 'EXPL_4': exploring_order = [5, 6, 4, 3, 7, 2, 0, 1]
-            case _:        print(self.NAME)
+            case _:        exploring_order = [5, 6, 4, 3, 7, 2, 0, 1]
         self.dfs = DFS(exploring_order)
 
     def upload_map_and_stop(self):
@@ -58,10 +57,10 @@ class Explorer(AbstAgent):
     def deliberate(self) -> bool:
         """ The agent chooses the next action. The simulator calls this
         method at each cycle. Must be implemented in every agent"""
-        print(f"\n{self.NAME} deliberate:")
+        # print(f"\n{self.NAME} deliberate:")
 
         # No more actions, time almost ended
-        print(f'{self.get_rtime()} / {self.walk_time}')
+        # print(f'{self.get_rtime()} / {self.walk_time}')
 
         if self.exploring and self.get_rtime() <= self.cost_to_home + 80:
             # Time to go home
@@ -89,12 +88,12 @@ class Explorer(AbstAgent):
         # Test the result of the walk action
         if result == VS.BUMPED:
             walls = 1  # build the map- to do
-            print(f"{self.NAME}: wall or grid limit reached")
+            # print(f"{self.NAME}: wall or grid limit reached")
 
         if result == VS.EXECUTED:
             # check for victim returns -1 if there is no victim or the sequential
             # the sequential number of a found victim
-            print(f"{self.NAME} walk executed, rtime: {self.get_rtime()}")
+            # print(f"{self.NAME} walk executed, rtime: {self.get_rtime()}")
 
             self.state = (self.state[0] + dx, self.state[1] + dy)
 
@@ -119,9 +118,9 @@ class Explorer(AbstAgent):
                     read_time = start_time - self.get_rtime()
                     self.walk_time += read_time
 
-                    print(f"{self.NAME} Vital signals read, rtime: {self.get_rtime()}")
-                    print(f"{self.NAME} Vict: {vs[0]}\n     pSist: {vs[1]:.1f} pDiast: {vs[2]:.1f} qPA: {vs[3]:.1f}")
-                    print(f"     pulse: {vs[4]:.1f} frResp: {vs[5]:.1f}")  
+                    # print(f"{self.NAME} Vital signals read, rtime: {self.get_rtime()}")
+                    # print(f"{self.NAME} Vict: {vs[0]}\n     pSist: {vs[1]:.1f} pDiast: {vs[2]:.1f} qPA: {vs[3]:.1f}")
+                    # print(f"     pulse: {vs[4]:.1f} frResp: {vs[5]:.1f}")  
 
         return True
 
