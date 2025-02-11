@@ -12,7 +12,9 @@ import numpy as np
 from sklearn.cluster import KMeans
 
 from map import Map
+
 from regressors_and_classifiers import load_training_data, train_DTClassifier, train_DTRegressor
+from ag_tsp import AGTsp
 
 ## Classe que define o Agente Rescuer com um plano fixo
 class Rescuer(AbstAgent):
@@ -139,29 +141,34 @@ class Rescuer(AbstAgent):
         """ A private method that calculates the walk actions to rescue the
         victims. Further actions may be necessary and should be added in the
         deliberata method"""
-
-        def pop_closest(state, victims):
-            ci = None
-            cd = float('inf')
-            for i, v in enumerate(victims):
-                dx = v[0][0] - state[0]
-                dy = v[0][1] - state[1]
-                d = dx*dx + dy*dy 
-                if d < cd:
-                    cd = d
-                    ci = i
+        def fit(victim_indexes: list[int]):
+            v0 = self.victims[victim_indexes[0]]
+            dist = abs(v0[0][0]) + abs(v0[0][1])
             
-            return victims.pop(ci)
+            for i in range(len(victim_indexes)-1):
+                v0 = self.victims[victim_indexes[i]]
+                v1 = self.victims[victim_indexes[i+1]]
+                dist += abs(v0[0][0] - v1[0][0]) + abs(v0[0][1] - v1[0][1])
+
+            v0 = self.victims[victim_indexes[-1]]
+            dist += abs(v0[0][0]) + abs(v0[0][1])
+
+            return -dist
+
+        # AGTsp.PLOTAR = True
+        ag = AGTsp(len(self.victims), fit)
+        ag.executar_ag()
 
         # This is a off-line trajectory plan, each element of the list is
         # a pair dx, dy that do the agent walk in the x-axis and/or y-axis
         self.plan = []
         plan_state = (0, 0)
+        caminho = ag.melhor_caminho
 
         self.sequences = []
 
-        while len(self.victims) > 0:
-            v = pop_closest(plan_state, self.victims)
+        while len(caminho) > 0:
+            v = self.victims[caminho.pop(0)]
             _, path_to = self.map.get_path(plan_state, v[0])
             path_to.reverse()
             self.plan += path_to
