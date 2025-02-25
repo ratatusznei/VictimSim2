@@ -39,7 +39,7 @@ if __name__ == '__main__':
     else:
         cur_folder = Path.cwd()
 
-        data_folder = os.path.join(cur_folder.parent, "datasets", "data_300v_90x90")
+        data_folder = os.path.join(cur_folder.parent, "datasets", "data_400v_90x90")
         cfg_ag_folder = os.path.join(cur_folder, "cfg_1")
         
     main(data_folder, cfg_ag_folder)

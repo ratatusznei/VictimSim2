@@ -67,8 +67,20 @@ def train_MLPRegressor(X_treino, value_treino, X_validacao, value_validacao, hid
 
 if __name__ == '__main__':
     X_treino, value_treino, class_treino, X_validacao, value_validacao, class_validacao = load_training_data()
-    train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao)
-    train_MLPClassifier(X_treino, class_treino, X_validacao, class_validacao)
 
-    train_DTRegressor(X_treino, value_treino, X_validacao, value_validacao)
-    train_MLPRegressor(X_treino, value_treino, X_validacao, value_validacao)
+    # for pars in [(100, 2), (30, 20), (200, 1)]:
+    #     print(f'max_depth={pars[0]} min_samples_leaf={pars[1]}')
+    #     train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao, max_depth=pars[0], min_samples_leaf=pars[1])
+
+    # for pars in [( (50,), 500 ), ( (50, 50, 50,), 500 ), ( (50, 50, 50), 1000)]:
+    #     print(f'hidden_layer_sizes={pars[0]}, max_iter={pars[1]}')
+    #     train_MLPClassifier(X_treino, class_treino, X_validacao, class_validacao, hidden_layer_sizes=pars[0], max_iter=pars[1])
+
+    # for pars in [(100, 2), (30, 20), (200, 1)]:
+    #     print(f'max_depth={pars[0]} min_samples_leaf={pars[1]}')
+    #     train_DTRegressor(X_treino, class_treino, X_validacao, class_validacao, max_depth=pars[0], min_samples_leaf=pars[1])
+
+    for pars in [( (50,), 500 ), ( (50, 50, 50,), 500 ), ( (50, 50, 50), 1000)]:
+        print(f'hidden_layer_sizes={pars[0]}, max_iter={pars[1]}')
+        train_MLPRegressor(X_treino, class_treino, X_validacao, class_validacao, hidden_layer_sizes=pars[0], max_iter=pars[1])
+

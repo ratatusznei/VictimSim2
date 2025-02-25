@@ -42,8 +42,8 @@ class Rescuer(AbstAgent):
 
         if master: 
             X_treino, value_treino, class_treino, X_validacao, value_validacao, class_validacao = load_training_data()
-            self.regressor = train_DTRegressor(X_treino, class_treino, X_validacao, class_validacao)
-            self.classifier = train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao)
+            self.regressor = train_DTRegressor(X_treino, class_treino, X_validacao, class_validacao, max_depth=100, min_samples_leaf=2)
+            self.classifier = train_DTClassifier(X_treino, class_treino, X_validacao, class_validacao, max_depth=100, min_samples_leaf=2)
 
             # Instantiate the other rescuers and assign the clusters to them
             self.rescuers = [self, None, None, None]
@@ -101,7 +101,6 @@ class Rescuer(AbstAgent):
         with open(filename, 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             for values in sequence:
-                print(values)
                 x, y = values[0]      # x,y coordinates
                 vs = values[1]        # list of vital signals
                 writer.writerow([vs[0], x, y, vs[6], vs[7]])
@@ -206,7 +205,7 @@ class Rescuer(AbstAgent):
             if seq != VS.NO_VICTIM:
                 res = self.first_aid() # True when rescued
 
-        # print(f"{self.NAME} remaining time: {self.get_rtime()}")
+            # print(f"{self.NAME} remaining time: {self.get_rtime()}")
 
         return True
 
